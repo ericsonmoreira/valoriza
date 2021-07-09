@@ -1,15 +1,20 @@
 import { getCustomRepository } from 'typeorm';
 import { TagsRepositories } from '../repositories/TagsRepositories';
+import * as yup from 'yup';
 
 interface ITagResquest {
   name: string;
 }
 
+const schema = yup.object().shape({
+  name: yup.string().required(),
+});
+
 class CreateTagService {
   async execute({ name }: ITagResquest) {
     const tagsRepositories = getCustomRepository(TagsRepositories);
 
-    if (!name) throw new Error('Name incorrect');
+    await schema.validate({ name });
 
     const tagAlreadyExists = await tagsRepositories.findOne({ name });
 

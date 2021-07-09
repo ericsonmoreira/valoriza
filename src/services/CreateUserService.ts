@@ -1,6 +1,6 @@
-import { UsersRepositories } from '../repositories/UsersRepositories';
-
 import { getCustomRepository } from 'typeorm';
+import * as yup from 'yup';
+import { UsersRepositories } from '../repositories/UsersRepositories';
 
 interface IUserResquest {
   name: string;
@@ -8,12 +8,17 @@ interface IUserResquest {
   admin?: boolean;
 }
 
+const schema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup.string().required().email(),
+});
+
 // TODO: add yup validation
 class CreateUserService {
   async execute({ name, email, admin }: IUserResquest) {
     const usersRepositories = getCustomRepository(UsersRepositories);
 
-    if (!email) throw new Error('Email incorrect');
+    await schema.validate({ name, email, admin });
 
     const userAlreadyExists = await usersRepositories.findOne({ email });
 
