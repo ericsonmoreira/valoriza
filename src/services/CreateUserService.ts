@@ -17,9 +17,8 @@ const schema = yup.object().shape({
   admin: yup.boolean(),
 });
 
-// TODO: add yup validation
 class CreateUserService {
-  async execute({ name, email, admin, password }: IUserResquest) {
+  async execute({ name, email, admin = false, password }: IUserResquest) {
     const usersRepositories = getCustomRepository(UsersRepositories);
 
     await schema.validate({ name, email, admin, password });
