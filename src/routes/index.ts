@@ -3,54 +3,46 @@ import { AuthenticateUserController } from '../controllers/AuthenticateUserContr
 import { CreateComplimentController } from '../controllers/CreateComplimentController';
 import { CreateTagController } from '../controllers/CreateTagController';
 import { CreateUserController } from '../controllers/CreateUserController';
+import { ListTagsController } from '../controllers/ListTagsController';
 import { ListUserRecivedSendComplimentsComtroller } from '../controllers/ListUserRecivedComplimentsComtroller';
+import { ListUsersController } from '../controllers/ListUsersController';
 import { ListUserSendComplimentsComtroller } from '../controllers/ListUserSendComplimentsComtroller';
 import { ensureAdmin } from '../middlewares/ensureAdmin';
 import { ensureAuthenticate } from '../middlewares/ensureAuthenticate';
 
 const router = Router();
 
-const createUserController = new CreateUserController();
+router.post('/login', new AuthenticateUserController().handle);
 
-const createTagController = new CreateTagController();
+router.get('/users', ensureAuthenticate, new ListUsersController().handle);
 
-const createComplimentController = new CreateComplimentController();
-
-const authenticateUserController = new AuthenticateUserController();
-
-const listUserSendComplimentsComtroller =
-  new ListUserSendComplimentsComtroller();
-
-const listUserRecivedSendComplimentsComtroller =
-  new ListUserRecivedSendComplimentsComtroller();
-
-router.post('/login', authenticateUserController.handle);
-
-router.post('/users', ensureAuthenticate, createUserController.handle);
+router.post('/users', ensureAuthenticate, new CreateUserController().handle);
 
 router.get(
   '/users/compliments/send',
   ensureAuthenticate,
-  listUserSendComplimentsComtroller.handle
+  new ListUserSendComplimentsComtroller().handle
 );
 
 router.get(
   '/users/compliments/recived',
   ensureAuthenticate,
-  listUserRecivedSendComplimentsComtroller.handle
+  new ListUserRecivedSendComplimentsComtroller().handle
 );
+
+router.get('/tags', ensureAuthenticate, new ListTagsController().handle);
 
 router.post(
   '/tags',
   ensureAuthenticate,
   ensureAdmin,
-  createTagController.handle
+  new CreateTagController().handle
 );
 
 router.post(
   '/compliments',
   ensureAuthenticate,
-  createComplimentController.handle
+  new CreateComplimentController().handle
 );
 
 export { router };

@@ -1,8 +1,9 @@
+import { hash } from 'bcryptjs';
+import { classToPlain } from 'class-transformer';
 import { getCustomRepository } from 'typeorm';
 import * as yup from 'yup';
 import { UsersRepositories } from '../repositories/UsersRepositories';
 
-import { hash } from 'bcryptjs';
 interface IUserResquest {
   name: string;
   email: string;
@@ -36,9 +37,7 @@ class CreateUserService {
 
     await usersRepositories.save(user);
 
-    delete user.password;
-
-    return user;
+    return classToPlain(user);
   }
 }
 
